@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Script>
+  <Context>Zen26</Context>
+  <Version>1.0</Version>
+  <Language>Python</Language>
+  <Text># This OAD Macro adds a new column to the histogram table
+# This column is computed as a ratio of the sum and the count column
+# It is assumed that the sum column is the third column of the table
+# It is assumed that the count column is the fourth column of the table
+table = Zen.Application.ActiveWorkbench.GetDefaultInputValue()
+table.Name = "Final Histogram - Feret Maximum"
+print(table.Columns[1])
+
+
+if not table.Columns.Contains("Mean (Feret Maximum Updated [μm])"):
+    table.Columns.Add("Mean (Feret Maximum Updated [μm])")
+
+n_rows = table.RowCount
+
+col_sum = 2
+col_count = 3
+col_mean = 4
+
+for row in range(0,n_rows):
+    if table.GetValue(row,col_count)==0:
+        table.SetValue(row,col_mean, None)
+    else:
+        table.SetValue(row,col_mean, table.GetValue(row,col_sum)/table.GetValue(row,col_count))
+
+Zen.Application.ActiveWorkbench.SetOutputValue(table, "Final Histogram - Feret Maximum")
+Zen.Application.ActiveWorkbench.SetDefaultOutputValue(table)
+
+Zen.Application.ActiveDocument = table
+
+
+</Text>
+  <Author></Author>
+  <Description></Description>
+  <Keywords></Keywords>
+</Script>

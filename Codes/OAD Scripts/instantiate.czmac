@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Script>
+  <Context>Zen26</Context>
+  <Version>1.0</Version>
+  <Language>Python</Language>
+  <Text>table = ZenTable()
+table.Columns.Add("Count of Iterations")
+table.Columns.Add("Aggregated Particle Count")
+table.SetValue(0,0,0)
+table.SetValue(0,1,0)
+table.Name = "Aggregated"
+
+table_particles_cum = ZenTable()
+table_particles_cum.Name = "CumTable"
+
+Zen.Application.ActiveWorkbench.SetOutputValue(table, "Aggregated")
+Zen.Application.ActiveWorkbench.SetOutputValue(table_particles_cum, "CumTable")
+
+Zen.Application.ActiveDocument = table
+
+#*************table.SetValue(0,0,0)
+
+
+</Text>
+  <Author></Author>
+  <Description></Description>
+  <Keywords></Keywords>
+  <Row>18</Row>
+  <Column>1</Column>
+</Script>

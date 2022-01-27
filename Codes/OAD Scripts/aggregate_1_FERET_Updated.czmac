@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Script>
+  <Context>Zen26</Context>
+  <Version>1.0</Version>
+  <Language>Python</Language>
+  <Text>import System
+
+table_cum_exists = False
+
+for out in Zen.Application.GetAllOutputParameters():
+    if type(out.Value) is ZenTable:
+        print(out.Value.Name)
+        if out.Value.Name == "Particles Sum":
+            count = out.Value
+        elif out.Value.Name == "Aggregated":
+            countAgg = out.Value
+        elif out.Value.Name == "Particles":
+            table_particles = out.Value
+        elif out.Value.Name == "CumTable":
+            table_cum_exists = True
+            table_particles_cum = out.Value
+
+BoundWidthIndex=(table_particles.Columns.IndexOf('BoundWidth'))
+BoundHeightIndex=(table_particles.Columns.IndexOf('BoundHeight'))
+print(BoundWidthIndex,BoundHeightIndex)
+print('Rows_count', table_particles.Rows.Count)
+if table_particles.Columns.Contains("Feret Maximum Updated [μm]")!= True:
+    table_particles.Columns.Add("Feret Maximum Updated [μm]",System.Double)
+IndexOfFeretMaximumUpdated=table_particles.Columns.IndexOf("Feret Maximum Updated [μm]")
+
+for i in range(table_particles.Rows.Count):
+    BoundWidth=table_particles.GetValue(i,BoundWidthIndex)
+    BoundHeight=table_particles.GetValue(i,BoundHeightIndex)
+    FeretMax_Updated=max(BoundWidth,BoundHeight)
+    table_particles.SetValue(i,IndexOfFeretMaximumUpdated,FeretMax_Updated)
+    #print(BoundWidth,BoundHeight, FeretMax_Updated)
+
+
+# Aggregated Particle Count
+countValue = count.GetValue(0,0) # Number of particles in current image
+countAggValue = countAgg.GetValue(0,1) # Number of particles counted beforehand
+countAggValue_new = int(countAggValue) + int(countValue) # Updated value
+countAgg.SetValue(0,1,countAggValue_new) # Add updated value to table
+
+# Number of iterations of images
+number_iterations = countAgg.GetValue(0,0)
+number_iterations_new = int(number_iterations) + 1
+countAgg.SetValue(0,0,number_iterations_new)
+
+# Create table with cumulative particle features
+table_particles_cum.AppendContent(table_particles)
+
+countAgg.Name = "Aggregated"
+Zen.Application.ActiveWorkbench.SetOutputValue(countAgg, "Aggregated")
+Zen.Application.ActiveWorkbench.SetOutputValue(table_particles_cum, "CumTable")
+
+#Zen.Application.ActiveWorkbench.SetDefaultOutputValue(table_particles_cum)
+#Zen.Application.ActiveDocument = table_particles_cum
+
+
+
+
+
+
+Zen.Application.ActiveWorkbench.SetDefaultOutputValue(countAgg)
+Zen.Application.ActiveDocument = countAgg
+
+print("Number of iterations: ", number_iterations)
+print("Number of iterations updated: ", number_iterations_new)
+print("Number of Particle Counts: ", countAggValue)
+print("Number of Particle Counts updated: ", countAggValue_new)
+
+print(table_particles_cum.ColumnCount)
+print(table_particles_cum.Columns.IndexOf("FeretMaximumUpdated"))
+print(table_particles_cum.Columns.Contains("FeretMaximumUpdated"))
+</Text>
+  <Author></Author>
+  <Description></Description>
+  <Keywords></Keywords>
+  <Row>25</Row>
+  <Column>1</Column>
+</Script>
